@@ -32,6 +32,7 @@ Memory::Memory()
 Memory::~Memory()
 {}
 
+// The get_csv_contents() function is used to get the csv_contents from the Memory class. Precondition: read_csv() must have been called to create a list of the requested CSV file. Postcondition: returns the csv_contents from Memory class. This return is used as a parameter in uintToBinary();
 list<unsigned int> Memory::get_csv_contents()
 {
   return csv_contents;
@@ -93,19 +94,24 @@ public:
   int address;  //bits 2 to 31: used in j
 };
 
+// The uintToBinary() function is used to convert the unsigned int list values from a specified CSV file (That were retrieved using read_csv()) into string type values. These values are then pushed back into the binary_instructions vector inside of the Instruction class.  Precondition: read_csv() must have been called to create a unsinged integer list of the requested CSV file. The parameter of the uintToBinary() function is this unsigned integer list. Postcondition: Converts each unsigned integer element in the original list into a string and then prepends each string into the binary_instructions vector in the Instruction class.
 void Instruction::uintToBinary(list<unsigned int> given)
 {
+  // Initalize iterator to traverse unsigned integer list.
 	list<unsigned int>::iterator it;
 
 	for (it = given.begin(); it != given.end(); ++it)
   {
-		string temp_string = bitset<32>(*it).to_string();//convert uint to binary string
+    // initialize temporary string named temp_string that holds the converted string (that was once an unsigned integer).
+		string temp_string = bitset<32>(*it).to_string();
     cout << "conversion: " << temp_string << ", ";
+    // Push back each temp_string into the binary_instructions vector.
 		binary_instructions.push_back(temp_string);
 	}
   cout << "Done conversion" << endl;
 }
 
+// The decode() function is used to determine what type of instruction format (R,I,J, or P type) each element in the vector string from the Instruction class is. After that, this function will write to the "type" and "opcode" string variables in the Instruction class, as well as the "dest", "src1", "src2", "immediate" and "address" integer values in the instruction class.  Precondition: A vector string that only contained binary values was successfully passed into the function. Postcondition: Determined what type of instruction format (R,I,J, or P type) each element in the vector string was. Wrote to the "type" and "opcode" string variables in the Instruction class, as well as the "dest", "src1", "src2", "immediate" and "address" integer values in the instruction class.
 void Instruction::decode(vector<string> binary)
 {
 	vector<string>::iterator it;
@@ -142,6 +148,7 @@ void Instruction::decode(vector<string> binary)
 			string opcode_bits = it->substr(2,4);
       string dest_bits = it->substr(6,5);
       string src1_bits = it->substr(11,5);
+      string immediate_bits = it->substr(16, 16); // PLEASE CHECK IF THIS IS CORRECT!!!!!!!!!!
 			decode_opcode(opcode_bits);
       dest = stoi(dest_bits, 0, 2);
       src1 = stoi(src1_bits, 0, 2);
