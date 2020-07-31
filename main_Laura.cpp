@@ -71,12 +71,16 @@ void Memory::read_csv(string file_name)
 class Instruction
 {
 public:
-  void uintToBinary(list<unsigned int> list);
-  void decode(list<string> binary);
+  void uintToBinary(list<unsigned int> given);
+  void decode(vector<string> binary);
+  void decode_opcode(string code);
+  //void decode_src1(string code);
+  //void decode_src2(string code);
+  //void decode_dest(string code);
 
-  list<string> binary_instructions;
+  vector<string> binary_instructions;
   string type;//bits 0 to 1: used in r, i, p, j
-  int opcode;//bits 2 to 5: used in r, p
+  string opcode;//bits 2 to 5: used in r, p
   string dest;//bits 6 to 10: used in r, i, p
   string src1;//bits 11 to 15: used in r, i
   string src2;//bits 16 to 20: used in r
@@ -84,35 +88,101 @@ public:
   int address;//bits 2 to 31: used in j
 };
 
-void Instruction :: uintToBinary(list<unsigned int> list){
-  std::list<unsigned int>::iterator it;
+void Instruction::uintToBinary(list<unsigned int> given){
+  list<unsigned int>::iterator it;
 
-//check if int to string function to simplify
-  for (it = list.begin(); it != list.end(); ++it){
+  for (it = given.begin(); it != given.end(); ++it){
     string temp_string = bitset<32>(*it).to_string();//convert uint to binary string
 
     binary_instructions.push_back(temp_string);
   }
 }
 
-void Instruction :: decode(list<string> binary){
-  std::list<string>::iterator it;
+void Instruction :: decode(vector<string> binary)
+{
+  vector<string>::iterator it;
 
-  for (it = list.begin(); it != list.end(); ++it){
-    if (*it[0] == "0" && *it[1] == "0"){//type r
+  for (it = binary.begin(); it != binary.end(); ++it)
+  {
+    string type_bits = it -> substr(0,2);
+
+    if (type_bits == "00")
+    {//type r
+      type = "r";
+      string opcode_bits = it -> substr(2,4);
+      decode_opcode(opcode_bits);
     }
 
-    else if (*it[0] == "0" && *it[1] == "1"){//type i
+    else if (type_bits == "01"){//type i
+      type = "i";
+      string opcode_bits = it -> substr(2,4);
+      decode_opcode(opcode_bits);
     }
 
-    else if (*it[1] == "0" && *it[1] == "0"){//type j
+    else if (type_bits == "10"){//type j
+      type = "j";
+
     }
 
-    else if (*it[0] == "1" && *it[1] == "1"){//type p
+    else if (type_bits == "11"){//type p
+      type = "p";
+      string opcode_bits = it -> substr(2,4);
+      decode_opcode(opcode_bits);
+    }
+
+    else{
+      cout << "Error: invalid instruction type." << endl;
     }
   }
+}
 
+void Instruction :: decode_opcode(string code)
+{ //I haven't yet tested this file out
 
+  if (code == "0000") // add
+  {
+    opcode = "add";
+  }
+
+  else if (code == "0001") // subtract
+  {
+    opcode = "subtract";
+  }
+
+  else if (code == "0011") // divide
+  {
+    opcode = "divide";
+  }
+
+  else if (code == "0100") // modulo
+  {
+    opcode = "modulo";
+  }
+
+  else if (code == "0101") // BEQ
+  {
+    opcode = "BEQ";
+  }
+
+  else if (code == "0110") // BNE (sub)
+  {
+    opcode = "BNE";
+  }
+
+  else if (code == "0111") // move
+  {
+    opcode = "move";
+  }
+
+  else if (code == "1000") // move again....
+  {
+    opcode = "move";
+  }
+
+  else
+  {
+    cout << "Error: Invalid opcode value." << endl;
+  }
 }
 
 // A class that implements the commit, execute and fetch functions, such that main()
