@@ -72,20 +72,27 @@ void Memory::read_csv(string file_name)
 class Instruction : public Memory
 {
 public:
-  void uintToBinary();
-
+  void uintToBinary(list<unsigned int> given);
+  void function();
   list<string> binary_instructions;
 };
 
-void Instruction :: uintToBinary(list<unsigned int> list){
-  list<unsigned int>::iterator it;
+void Instruction::function()
+{
+  cout << "hello!";
+}
 
-//check if int to string function to simplify
-  for (it = list.begin(); it != list.end(); ++it){
-    string temp_string = bitset<32>(*it).to_string();//convert uint to binary string
+void Instruction::uintToBinary(list<unsigned int> given)
+{
+  //void Instruction::uintToBinary(list<unsigned int> list)
+    list<unsigned int>::iterator it;
+  //check if int to string function to simplify
+    for (it = given.begin(); it != given.end(); ++it)
+    {
+      string temp_string = bitset<32>(*it).to_string();//convert uint to binary string
 
-    binary_instructions.push_back(temp_string);
-  }
+      binary_instructions.push_back(temp_string);
+    }
 }
 
 // A class that implements the commit, execute and fetch functions, such that main()
@@ -162,7 +169,7 @@ int main()
     provide new stats for the next program. Exit if no further programs are to be executed.
   */
   Memory tester;
-  tester.menu(tester);
+  //tester.menu(tester);
   //tester.read_csv("factorial.csv");
   //cout << "Hello world";
 
