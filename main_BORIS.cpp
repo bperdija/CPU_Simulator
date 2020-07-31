@@ -33,7 +33,6 @@ class Memory
 public:
   Memory();
   ~Memory();
-  void menu(Memory obj);
   void read_csv(string file_name);
 protected:
   list<unsigned int> csv_contents;
@@ -94,7 +93,7 @@ public:
 // A class that implements the commit, execute and fetch functions, such that main()
 // simply instantiates the pipeline class and any necessary structures, and then continuously
 // calls pipeline fetch, execute and commit stages until the program has finished executing.
-class Pipeline : public Memory
+class Pipeline : public Instruction
 {
 public:
   void Fetch();
@@ -148,25 +147,21 @@ class HelperFunctions
 
 };
 
-
+/*
+• initializes necessary pipeline structures, including a Pipeline class instance
+• prompts user for program to execute
+• calls the pipeline class to run the member functions commit(..) execute (…) and fetch(..)
+• We will assume that if further instructions exist in the ROB, the program has not finished
+  executing. Therefore, if the ROB is empty, the program has finished executing in the context of
+  this project
+• Once the program has finished executing, the latency and throughput stats are provided to the
+  user
+• Loop again to prompt the user for another program to execute and re-initialize structures to
+  provide new stats for the next program. Exit if no further programs are to be executed.
+*/
 int main()
 {
 
-  /*
-  • initializes necessary pipeline structures, including a Pipeline class instance
-  • prompts user for program to execute
-  • calls the pipeline class to run the member functions commit(..) execute (…) and fetch(..)
-  • We will assume that if further instructions exist in the ROB, the program has not finished
-    executing. Therefore, if the ROB is empty, the program has finished executing in the context of
-    this project
-  • Once the program has finished executing, the latency and throughput stats are provided to the
-    user
-  • Loop again to prompt the user for another program to execute and re-initialize structures to
-    provide new stats for the next program. Exit if no further programs are to be executed.
-  */
-  Memory tester;
-  tester.menu(tester);
-  //tester.read_csv("factorial.csv");
-  //cout << "Hello world";
+  Pipeline tester;
 
 }
