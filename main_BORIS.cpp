@@ -255,6 +255,9 @@ void IQueue::insert_IQ_instruction(string element)
   IQueue_finite.push(element); // NOT SURE WHAT WE'RE PUSHING TO THIS QUEUE!! STRING ELEMENT?
 }
 
+
+
+
 // A class that implements the IQ. It instantiate a (finite) queue; inserts an instruction into queue;
 // check if instruction is ready for execution; printIQ() for debugging; delete an entry of the IQ during read
 // and execute;
@@ -373,8 +376,18 @@ void Pipeline::Fetch()
     set_ROB_element(binary_instruction); // Assigns a ROB ID to the instruction, places the instruction in the ROB
     insert_IQ_instruction(binary_instruction); // and places the instruction in the IQ.
     // CHECK THE IQ FOR VALIDY HAS NOT BEEN DONE!!!
+
+
     // Check if the instruction is a branch or jump;
+
+    /*
+    if it == csv_contents.end()
+    {
+      break;
+    }
+    */
     it++;
+
   }
   //uintToBinary(1234);
   //decode(binary_instruction);
