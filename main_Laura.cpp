@@ -1,3 +1,5 @@
+//TO DO: regist file, IQ, ROB, execute, commit, makefile, modes, widths, clock cycles, stats
+
 #include <list>
 #include <iostream>
 #include <string>
@@ -9,6 +11,12 @@
 #include <cmath>
 #include <bitset>
 #include <queue>
+
+#define FETCH_WIDTH 2
+#define ISSUE_WIDTH 2
+#define COMMIT_WIDTH 2
+#define EXECUTE
+#define DEBUG
 
 using namespace std;
 
@@ -34,9 +42,9 @@ public:
   ~Memory();
   void menu(Memory obj);
   void read_csv(string file_name);
-  list<unsigned int> get_csv_contents();
+  vector<unsigned int> get_csv_contents();
 protected:
-  list<unsigned int> csv_contents;
+  vector<unsigned int> csv_contents;
 };
 
 Memory::Memory()
@@ -46,7 +54,7 @@ Memory::~Memory()
 {}
 
 // The get_csv_contents() function is used to get the csv_contents from the Memory class. Precondition: read_csv() must have been called to create a list of the requested CSV file. Postcondition: returns the csv_contents from Memory class. This return is used as a parameter in uintToBinary();
-list<unsigned int> Memory::get_csv_contents()
+vector<unsigned int> Memory::get_csv_contents()
 {
   return csv_contents;
 }
@@ -56,7 +64,7 @@ void Memory::read_csv(string file_name)
 	// variables
 	string temp_element;
 	// define empty lists to store values
-	std::list<unsigned int> values;
+	std::vector<unsigned int> values;
 	string file = file_name;
 	ifstream myFile;
 	myFile.open(file);
@@ -134,11 +142,6 @@ void Instruction::decode(string binary_code)
       src2 = stringToInt(src2_bits);
 
       cout << "dest: " <<  dest << " " << "src1: " << src1 << " " << "src2: " << src2 << endl << endl;
-      /*
-      decode_dest(dest_bits);
-      decode_src1(src1_bits);
-      decode_src2(src2_bits);
-      */
 		}
 
     //type i. type i DOES NOT have an src2.
@@ -173,6 +176,25 @@ void Instruction::decode(string binary_code)
       string dest_bits = binary_code.substr(6,5);
 			decode_opcode(opcode_bits);
       dest = stringToInt(dest_bits);
+      cout << "Enter parameter for program: ";
+      cin >> immediate;
+
+      while(true)
+      {
+        if(cin.fail())
+        {
+          cout << "Error: Parameter must be a integer." << endl;
+          cin.clear();
+          cin.ignore(256, '\n');
+          cout << "Enter parameter for program: ";
+          cin >> immediate;
+        }
+        else
+        {
+          break;
+        }
+      }
+
       cout << "dest: " << dest <<  endl;
 		}
 
@@ -236,6 +258,16 @@ void Instruction::decode_opcode(string code)
   return result;
 }
 
+struct IQ
+{
+  int dest_IQ;
+  int src1_IQ;
+  int src1_valid;
+  int src2_IQ;
+  int src2_valid;
+  int immediate_IQ;
+};
+
 // a class that implements the IQ. It instantiate a (finite) queue; inserts an instruction into queue;
 // check if instruction is ready for execution; printIQ() for debugging; delete an entry of the IQ during read and execute;
 class IQueue
@@ -246,9 +278,15 @@ public:
   void delete_entry();
   void check();
   void printIQ();
+  void insert_IQ_instruction(string element);
 protected:
   bool ready;
 };
+
+void IQueue::insert_IQ_instruction(string element)
+{
+  IQueue_finite.push(element); // NOT SURE WHAT WE'RE PUSHING TO THIS QUEUE!! STRING ELEMENT?
+}
 
 // A class that implements the IQ. It instantiate a (finite) queue; inserts an instruction into queue;
 // check if instruction is ready for execution; printIQ() for debugging; delete an entry of the IQ during read
@@ -265,10 +303,20 @@ class FetchUnit
 
 };
 
+struct Register_File
+{
+  int reg_num;
+  int src1_data;
+  int src2_data;
+  int src1_valid;
+  int src2_valid;
+};
+
 //a class that maintains the register file; setup the register file (RF) such that all register locations are associated with i) data value and ii) a status bit. The status bit indicates whether the value in the register is valid for reading or is awaiting an instruction’s result. The register # as shown in the table below is solely used to index a register. More details on the register file system is provided in a subsequent section entitled “Register File FYI”;  accessor and mutator functions should be implemented for setting or obtaining the value and status of a register.
 class RegisterFile
 {
 public:
+
 
 };
 
@@ -317,7 +365,14 @@ void ReorderBuffer::set_ROB_element(string inst)
 //a class used to track and calculate latency and throughput statistics of the running program. Statistics are provided to the user via standard output at the end of a program’s execution.
 class Statistics
 {
+public:
+  void calc_latency();
+  void calc_throughput();
 
+  int clock_cylce_count;
+  double clock_cycles_sum;
+  double latency;
+  double throughput;
 };
 
 //this class is used to provide all classes with any helper functions or global variables shared across the classes.
@@ -329,15 +384,19 @@ class HelperFunctions
 // A class that implements the commit, execute and fetch functions, such that main()
 // simply instantiates the pipeline class and any necessary structures, and then continuously
 // calls pipeline fetch, execute and commit stages until the program has finished executing.
-class Pipeline : public Instruction, public ReorderBuffer
+class Pipeline : public Instruction, public ReorderBuffer, public IQueue
 {
 public:
   Pipeline();
   ~Pipeline();
-  void Fetch();
-  void Execute();
-  void Commit();
+  void Fetch(unsigned int);
+  void Execute(unsigned int);
+  void Commit(unsigned int);
   friend void set_ROB_element(string inst);
+  void run(int PC_number);
+  void select_file();
+
+  int PC_number;
 };
 
 Pipeline::~Pipeline()
@@ -345,6 +404,9 @@ Pipeline::~Pipeline()
 
 Pipeline::Pipeline()
 {
+  PC_number = 0;
+  select_file();
+  run(PC_number);
   /*
   for (int i = 0; i < csv_contents.end(); i++)
   {
@@ -353,19 +415,109 @@ Pipeline::Pipeline()
   */
 }
 
-void Pipeline::Fetch()
+void Pipeline :: select_file()
+{
+  string user_choice;
+
+  cout << "Type 'exit' to terminate this application" << endl;
+  cout << "Enter a program for execution: ";
+  cin >> user_choice;
+    user_choice[0] = toupper(user_choice[0]);
+
+  if (user_choice == "Fibonacci" || user_choice == "Fibonacci.csv")
+  {
+    read_csv("fibonacci.csv");
+    cout << "reading file fibonacci.csv" << endl << endl;
+  }
+
+  else if (user_choice == "Factorial" || user_choice == "Factorial.csv")
+  {
+    read_csv("factorial.csv");
+    cout << "reading file factorial.csv" << endl << endl;
+  }
+
+  else if (user_choice == "Test program" || user_choice == "inst_mem.csv")
+  {
+    read_csv("inst_mem.csv");
+    cout << "reading file inst_mem.csv" << endl << endl;
+  }
+
+  else if (user_choice == "exit")
+  {
+    exit(0);
+  }
+
+  else{
+    cout << "Error: Invalid file name." << endl;
+  }
+}
+
+void Pipeline::run(int PC_number)
+{
+  std::vector<unsigned int>::iterator it;
+  it = csv_contents.begin();
+
+  for (it; it != csv_contents.end(); ++it)
+  {
+    Fetch(csv_contents[PC_number]);
+    Execute(csv_contents[PC_number]);
+    Commit(csv_contents[PC_number]);
+  }
+
+  if (it == csv_contents.end()){
+    //pop everything off csv_contents
+    for (int i = 0; i <= csv_contents.size(); i++)
+    {
+      csv_contents.pop_back();
+    }
+
+    select_file();
+  }
+}
+
+void Pipeline::Fetch(unsigned int inst)
 {
   //need to check if IQ and ROB have enough free spaces to proceed to fetch more instructions
   // if IQ (element) > 2 || ROB (element) > 2, do not fetch(?)
-  uintToBinary(1234);
-  decode(binary_instruction);
-  set_ROB_element(binary_instruction);
+
+  std::vector<unsigned int>::iterator it;
+  it = csv_contents.begin();
+
+  while(((IQueue_finite.size() < 3) && (it != csv_contents.end())) || ((ROB.size() < 3) && (it != csv_contents.end()))) // I would like to iterate as long as it hasnt reached the end of the csv file but the while loop always goes to the end of the csv file, regardless if theres more elements in IQUEUE or ROB. This is wrong!
+  // while(((IQueue_finite.size() < 3) || (it != csv_contents.end()))
+  {
+    cout << "Iqueue size: " << IQueue_finite.size() << endl<< "ROB size: " << ROB.size() << endl;
+    uintToBinary(*it); // Fetch the instruction located at PC from the instruction memory
+    PC_number++;
+    decode(binary_instruction); // Decode the instruction
+    set_ROB_element(binary_instruction); // Assigns a ROB ID to the instruction, places the instruction in the ROB
+    insert_IQ_instruction(binary_instruction); // and places the instruction in the IQ.
+    // CHECK THE IQ FOR VALIDY HAS NOT BEEN DONE!!!
+
+
+    // Check if the instruction is a branch or jump;
+
+    /*
+    if it == csv_contents.end()
+    {
+      break;
+    }
+    */
+    it++;
+    //PC++;
+
+    /*
+    uintToBinary(1234);
+    decode(binary_instruction);
+    set_ROB_element(binary_instruction);
+    */
+  }
 }
 
-void Pipeline :: Execute()
+void Pipeline :: Execute(unsigned int inst)
 {}
 
-void Pipeline :: Commit()
+void Pipeline :: Commit(unsigned int inst)
 {
   if (ROB.front().valid == true)
   {
@@ -395,8 +547,30 @@ int main()
 	 */
 	Pipeline tester;
 
-	tester.read_csv("factorial.csv");
-  tester.Fetch();
+
+  /*
+  string response;
+  bool runner = true;
+  while (true)
+  {
+    cout << "What program????";
+    cin >> response;
+    if response == "exit"
+    {
+      runner = false;
+    {
+    else
+    {
+      read_csv(response);
+      tester.Fetch();
+    }
+  }
+
+  }
+  */
+
+	//tester.read_csv("factorial.csv");
+  //tester.Fetch();
   //tester.uintToBinary(tester.get_csv_contents());
   //tester.decode(tester.binary_instructions);
 	//cout << "Hello world";
