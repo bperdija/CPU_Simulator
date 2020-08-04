@@ -15,6 +15,7 @@
 #define FETCH_WIDTH 2
 #define ISSUE_WIDTH 2
 #define COMMIT_WIDTH 2
+#define FINITE_LIMIT 100
 #define EXECUTE
 #define DEBUG
 
@@ -120,7 +121,7 @@ void Instruction::uintToBinary(unsigned int given)
 	binary_instruction = bitset<32>(given).to_string();
   cout << "conversion: " << binary_instruction << ", ";
 
-  cout << "Done conversion" << endl;
+  cout << "Done conversion" << "original: " << given << endl ;
 }
 
 // The decode() function is used to determine what type of instruction format (R,I,J, or P type) each element in the vector string from the Instruction class is. After that, this function will write to the "type" and "opcode" string variables in the Instruction class, as well as the "dest", "src1", "src2", "immediate" and "address" integer values in the instruction class.  Precondition: A vector string that only contained binary values was successfully passed into the function. Postcondition: Determined what type of instruction format (R,I,J, or P type) each element in the vector string was. Wrote to the "type" and "opcode" string variables in the Instruction class, as well as the "dest", "src1", "src2", "immediate" and "address" integer values in the instruction class.
@@ -156,7 +157,7 @@ void Instruction::decode(string binary_code)
       dest = stringToInt(dest_bits);
       src1 = stringToInt(src1_bits);
       immediate = stringToInt(immediate_bits);
-      cout << "dest: " <<  dest << " " << "src1: " << src1 << " " << endl << endl;
+      cout << "dest: " <<  dest << " " << "src1: " << src1 << " " << endl;
 		}
 
     // type j
@@ -258,34 +259,132 @@ void Instruction::decode_opcode(string code)
   return result;
 }
 
+
+struct Register_File
+{
+  Register_File() : data(), validity() {} //default constructor
+  Register_File(int data_given, int valid) : data(data_given), validity(valid) {} //overlaoded constructor
+
+  int data;
+  int validity;
+};
+
+//a class that maintains the register file; setup the register file (RF) such that all register locations are associated with i) data value and ii) a status bit. The status bit indicates whether the value in the register is valid for reading or is awaiting an instruction’s result. The register # as shown in the table below is solely used to index a register. More details on the register file system is provided in a subsequent section entitled “Register File FYI”;  accessor and mutator functions should be implemented for setting or obtaining the value and status of a register.
+class RegisterFile
+{
+public:
+  RegisterFile();
+  vector<Register_File> r;
+};
+
+RegisterFile::RegisterFile()
+{
+  // WHAT ABOUT R2?
+  r.resize(15);
+  //fill(r.validity.begin(), r.validity.end(), -1);
+  r[0].data = 0;
+  r[0].validity = 1;
+
+}
+
+//struct to hold the data of each element in the ROB queue
+struct ROB_element
+{
+public:
+  ROB_element() : valid(), inst(), ROB_ID() {} //default constructor
+  ROB_element(int validity, string The_inst, int The_ROB_ID) : valid(validity), inst(The_inst), ROB_ID(The_ROB_ID) {} //overlaoded constructor
+
+  int valid;
+  string inst;
+  int ROB_ID;
+};
+
+//STL structure used to maintain a list in the pipeline, such that the instructions are inserted and retired inorder. Instructions are inserted at fetch, removed at commit when valid. An example of the contents in the ROB are shown below.
+class ReorderBuffer
+{
+public:
+  ReorderBuffer();
+  deque<ROB_element> ROB;
+  // void Access_ROB_element(int validity);
+  void set_ROB_element(string inst, int PC_num);
+
+};
+
+ReorderBuffer :: ReorderBuffer()
+{}
+
+/*
+void ReorderBuffer :: Access_ROB_element(int validity)
+{
+  ROB.front().valid(1); // Change the last element to
+}
+*/
+
+void ReorderBuffer::set_ROB_element(string inst, int PC_num)
+{
+  ROB.push_back(ROB_element(0, inst, PC_num)); //create new ROB_element in the ROB queue
+}
+
 struct IQ
 {
-  int dest_IQ;
-  int src1_IQ;
-  int src1_valid;
-  int src2_IQ;
-  int src2_valid;
-  int immediate_IQ;
+  IQ() : opcode_IQ(), src1_IQ(), src1_valid(), src2_IQ(), src2_valid(), dest_IQ(), ROB_ID_IQ() {} //default constructor
+  IQ(string op, int sr1, int val1, int sr2, int val2, int des, int num) : opcode_IQ(op), src1_IQ(sr1), src1_valid(val1), src2_IQ(sr2), src2_valid(val2), dest_IQ(des), ROB_ID_IQ(num) {}
+  IQ(string op, int val1, int sr2, int val2, int des, int num) : opcode_IQ(op), src1_valid(val1), src2_IQ(sr2) , src2_valid(val2), dest_IQ(des), ROB_ID_IQ(num) {}
+  string opcode_IQ = 0 ;
+  int src1_IQ = 0;
+  int src1_valid = 0;
+  int src2_IQ = 0;
+  int src2_valid = 0;
+  int dest_IQ = 0;
+  int ROB_ID_IQ = 0;
 };
+
+/*
+string binary_instruction;
+string type;  //bits 0 to 1: used in r, i, p, j
+string opcode;  //bits 2 to 5: used in r, p
+int dest;  //bits 6 to 10: used in r, i, p
+int src1;  //bits 11 to 15: used in r, i
+int src2;  //bits 16 to 20: used in r
+int immediate;  //bits 16 to 31: used in i
+int address;  //bits 2 to 31: used in j
+*/
 
 // a class that implements the IQ. It instantiate a (finite) queue; inserts an instruction into queue;
 // check if instruction is ready for execution; printIQ() for debugging; delete an entry of the IQ during read and execute;
-class IQueue
+class IQueue : public Instruction, public RegisterFile
 {
 public:
-  queue<string> IQueue_finite;
-  void insert_instruction(string element);
-  void delete_entry();
-  void check();
-  void printIQ();
-  void insert_IQ_instruction(string element);
-protected:
-  bool ready;
+  deque<IQ> The_Queue;
+  void set_IQ_element(int PC_num);
 };
 
-void IQueue::insert_IQ_instruction(string element)
+void IQueue::set_IQ_element(int PC_num)
 {
-  IQueue_finite.push(element); // NOT SURE WHAT WE'RE PUSHING TO THIS QUEUE!! STRING ELEMENT?
+  cout << "this is the type code: " << type << endl;
+  cout << "this is the opcode code: " << opcode << endl << endl;
+  if (type == "r")
+  {
+    The_Queue.push_back(IQ(opcode, src1, r[src1].validity, src2, r[src2].validity, dest, PC_num));
+    cout << "it was r" << endl;
+  }
+
+  else if (type == "i")
+  {
+    The_Queue.push_back(IQ(opcode, src1, r[src1].validity, immediate, 1, dest, PC_num));
+    cout << "it was i" << endl;
+  }
+
+  else if (type == "p")
+  {
+    The_Queue.push_back(IQ(opcode, 1, immediate, 1, dest, PC_num));
+    cout << "it was p" << endl;
+  }
+
+  else
+  {
+    cout << "Error: Instruction could not be added to the IQueue." << endl;
+  }
 }
 
 // A class that implements the IQ. It instantiate a (finite) queue; inserts an instruction into queue;
@@ -303,64 +402,6 @@ class FetchUnit
 
 };
 
-struct Register_File
-{
-  int reg_num;
-  int src1_data;
-  int src2_data;
-  int src1_valid;
-  int src2_valid;
-};
-
-//a class that maintains the register file; setup the register file (RF) such that all register locations are associated with i) data value and ii) a status bit. The status bit indicates whether the value in the register is valid for reading or is awaiting an instruction’s result. The register # as shown in the table below is solely used to index a register. More details on the register file system is provided in a subsequent section entitled “Register File FYI”;  accessor and mutator functions should be implemented for setting or obtaining the value and status of a register.
-class RegisterFile
-{
-public:
-
-
-};
-
-//struct to hold the data of each element in the ROB queue
-struct ROB_element
-{
-public:
-  ROB_element() : valid(), inst(), ROB_ID() {} //default constructor
-  ROB_element(bool validity, string The_inst, int The_ROB_ID) : valid(validity), inst(The_inst), ROB_ID(The_ROB_ID) {} //overlaoded constructor
-
-  bool valid; //do we want bool or just int?
-  string inst; //I have no idea what data type this should be??????
-  int ROB_ID;
-};
-
-//STL structure used to maintain a list in the pipeline, such that the instructions are inserted and retired inorder. Instructions are inserted at fetch, removed at commit when valid. An example of the contents in the ROB are shown below.
-class ReorderBuffer
-{
-public:
-  ReorderBuffer();
-  //friend void access_ROB();
-  void set_ROB_element(string inst);
-
-  queue<ROB_element> ROB;
-  int ID_count;
-};
-
-/*
-ReorderBuffer::access_ROB()
-{
-  return ROB;
-}
-*/
-
-ReorderBuffer::ReorderBuffer()
-{
-  ID_count = 0;
-}
-
-void ReorderBuffer::set_ROB_element(string inst)
-{
-  ID_count++;
-  ROB.push(ROB_element(false, inst, ID_count)); //create new ROB_element in the ROB queue
-}
 
 //a class used to track and calculate latency and throughput statistics of the running program. Statistics are provided to the user via standard output at the end of a program’s execution.
 class Statistics
@@ -384,19 +425,18 @@ class HelperFunctions
 // A class that implements the commit, execute and fetch functions, such that main()
 // simply instantiates the pipeline class and any necessary structures, and then continuously
 // calls pipeline fetch, execute and commit stages until the program has finished executing.
-class Pipeline : public Instruction, public ReorderBuffer, public IQueue
+class Pipeline :  public ReorderBuffer, public IQueue
 {
 public:
   Pipeline();
   ~Pipeline();
-  void Fetch(unsigned int);
-  void Execute(unsigned int);
-  void Commit(unsigned int);
-  friend void set_ROB_element(string inst);
   void run(int PC_number);
   void select_file();
+  void Fetch(unsigned int); // passing a binary value here
+  void Execute();
+  void Commit();
+  int PC;
 
-  int PC_number;
 };
 
 Pipeline::~Pipeline()
@@ -404,15 +444,9 @@ Pipeline::~Pipeline()
 
 Pipeline::Pipeline()
 {
-  PC_number = 0;
+  PC = 0;
   select_file();
-  run(PC_number);
-  /*
-  for (int i = 0; i < csv_contents.end(); i++)
-  {
-    uintToBinary(csv_contents[i]);
-  }
-  */
+  run(PC);
 }
 
 void Pipeline :: select_file()
@@ -422,7 +456,7 @@ void Pipeline :: select_file()
   cout << "Type 'exit' to terminate this application" << endl;
   cout << "Enter a program for execution: ";
   cin >> user_choice;
-    user_choice[0] = toupper(user_choice[0]);
+  user_choice[0] = toupper(user_choice[0]);
 
   if (user_choice == "Fibonacci" || user_choice == "Fibonacci.csv")
   {
@@ -436,7 +470,7 @@ void Pipeline :: select_file()
     cout << "reading file factorial.csv" << endl << endl;
   }
 
-  else if (user_choice == "Test program" || user_choice == "inst_mem.csv")
+  else if (user_choice == "Test" || user_choice == "inst_mem.csv")
   {
     read_csv("inst_mem.csv");
     cout << "reading file inst_mem.csv" << endl << endl;
@@ -444,6 +478,7 @@ void Pipeline :: select_file()
 
   else if (user_choice == "exit")
   {
+    cout << "Good bye.";
     exit(0);
   }
 
@@ -454,84 +489,207 @@ void Pipeline :: select_file()
 
 void Pipeline::run(int PC_number)
 {
-  std::vector<unsigned int>::iterator it;
-  it = csv_contents.begin();
+  cout << "this is the csv size: " << csv_contents.size() << endl;
 
-  for (it; it != csv_contents.end(); ++it)
+  while ((PC < csv_contents.size()))// || !ROB.empty())
   {
+    //cout << csv_contents.size();
     Fetch(csv_contents[PC_number]);
-    Execute(csv_contents[PC_number]);
-    Commit(csv_contents[PC_number]);
+    Execute();
+    Commit();
   }
 
-  if (it == csv_contents.end()){
-    //pop everything off csv_contents
-    for (int i = 0; i <= csv_contents.size(); i++)
-    {
-      csv_contents.pop_back();
-    }
-
-    select_file();
+  for (int i = 0; i < The_Queue.size(); i++)
+  {
+    cout << "IQ #" << i << ": " << The_Queue[i].opcode_IQ << endl;
   }
+
+  //pop everything off csv_contents
+  int temp = csv_contents.size();
+  for (int i = 0; i <= temp; i++)
+  {
+    csv_contents.pop_back();
+  }
+
+  select_file();
+  PC = 0;
+  run(PC);
 }
 
 void Pipeline::Fetch(unsigned int inst)
 {
-  //need to check if IQ and ROB have enough free spaces to proceed to fetch more instructions
-  // if IQ (element) > 2 || ROB (element) > 2, do not fetch(?)
-
-  std::vector<unsigned int>::iterator it;
-  it = csv_contents.begin();
-
-  while(((IQueue_finite.size() < 3) && (it != csv_contents.end())) || ((ROB.size() < 3) && (it != csv_contents.end()))) // I would like to iterate as long as it hasnt reached the end of the csv file but the while loop always goes to the end of the csv file, regardless if theres more elements in IQUEUE or ROB. This is wrong!
-  // while(((IQueue_finite.size() < 3) || (it != csv_contents.end()))
+  //cout << "This is inside fetch" << endl;
+  for (int i = 0; (i < FETCH_WIDTH && PC < csv_contents.size()); i++)
   {
-    cout << "Iqueue size: " << IQueue_finite.size() << endl<< "ROB size: " << ROB.size() << endl;
-    uintToBinary(*it); // Fetch the instruction located at PC from the instruction memory
-    PC_number++;
-    decode(binary_instruction); // Decode the instruction
-    set_ROB_element(binary_instruction); // Assigns a ROB ID to the instruction, places the instruction in the ROB
-    insert_IQ_instruction(binary_instruction); // and places the instruction in the IQ.
-    // CHECK THE IQ FOR VALIDY HAS NOT BEEN DONE!!!
+    //cout << "This is inside fetch for loop" << endl;
+
+    //cout << "This is inside fetch if statement" << endl;
+
+      if ((The_Queue.size() < FINITE_LIMIT) || (ROB.size() < FINITE_LIMIT))
+      {
+        cout << "This is the PC: " << PC << endl;
+        cout << "Iqueue size: " << The_Queue.size() << endl<< "ROB size: " << ROB.size() << endl;
+        uintToBinary(csv_contents[PC]);
+        decode(binary_instruction);
 
 
-    // Check if the instruction is a branch or jump;
+        if (type == "j")
+        {
+          PC = address;
+          Fetch(PC);
+        }
 
-    /*
-    if it == csv_contents.end()
-    {
-      break;
-    }
-    */
-    it++;
-    //PC++;
 
-    /*
-    uintToBinary(1234);
-    decode(binary_instruction);
-    set_ROB_element(binary_instruction);
-    */
+        else if (opcode == "BEQ")
+        {
+          if (r[src1].data == r[dest].data)
+          {
+            PC = immediate;
+          }
+
+          else
+          {
+            PC++;
+          }
+          Fetch(PC);
+        }
+
+
+        else if (opcode == "BNE")
+        {
+          cout << "this is src1: " << r[src1].data << " This is dest: " << r[dest].data << endl;
+          if (r[src1].data != r[dest].data)
+          {
+            cout << "NOOOOOOOOOOOO" << endl;
+            PC = immediate;
+          }
+
+          else
+          {
+            PC++;
+          }
+
+          Fetch(PC);
+        }
+
+
+        set_ROB_element(binary_instruction, PC);
+        set_IQ_element(PC);
+
+        PC++;
+      }
   }
 }
 
-void Pipeline :: Execute(unsigned int inst)
-{}
 
-void Pipeline :: Commit(unsigned int inst)
+
+
+
+void Pipeline :: Execute()
 {
-  if (ROB.front().valid == true)
+  for (int i = 0; i < ISSUE_WIDTH; i++)
   {
-    ROB.pop();
-  }
+    if (The_Queue.front().src1_valid == 1 && The_Queue.front().src2_valid == 1)
+    {
+      if (type == "r")
+      {
+        if (The_Queue.front().opcode_IQ == "add")
+        {
+          r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data + r[The_Queue.front().src2_IQ].data;
+        }
 
+        else if (The_Queue.front().opcode_IQ == "subtract")
+        {
+          r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data - r[The_Queue.front().src2_IQ].data;
+        }
+
+        else if (The_Queue.front().opcode_IQ == "multiply")
+        {
+          r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data * r[The_Queue.front().src2_IQ].data;
+        }
+
+        else if (The_Queue.front().opcode_IQ == "divide")
+        {
+          r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data / r[The_Queue.front().src2_IQ].data;
+        }
+
+        else if (The_Queue.front().opcode_IQ == "modulo")
+        {
+          r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data % r[The_Queue.front().src2_IQ].data;
+        }
+
+        else if (The_Queue.front().opcode_IQ == "move")
+        {
+          r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data;
+        }
+
+
+
+      }
+
+      else if (type == "i")
+      {
+        if (The_Queue.front().opcode_IQ == "add")
+        {
+          cout << "add is being mean" << endl;
+          cout << "The destination is r[" << The_Queue.front().dest_IQ << "] uwu" << endl;
+          cout << "src1_IQ  ( ie r=) " << The_Queue.front().src1_IQ << endl;
+          r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data + The_Queue.front().src2_IQ;
+        }
+
+        else if (The_Queue.front().opcode_IQ == "subtract")
+        {
+          cout << "sub is being mean" << endl;
+          r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data - The_Queue.front().src2_IQ;
+        }
+
+        else if (The_Queue.front().opcode_IQ == "multiply")
+        {
+          cout << "mult is being mean" << endl;
+          r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data * The_Queue.front().src2_IQ;
+        }
+
+        else if (The_Queue.front().opcode_IQ == "divide")
+        {
+          cout << "div is being mean" << endl;
+          r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data / The_Queue.front().src2_IQ;
+        }
+
+        else if (The_Queue.front().opcode_IQ == "modulo")
+        {
+          cout << "modulo is being mean" << endl;
+          r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data % The_Queue.front().src2_IQ;
+        }
+      }
+
+      else if (type == "p")
+      {
+        r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src2_IQ].data;
+      }
+
+      cout << "Execute complete!! r[" << The_Queue.front().dest_IQ << "] = " << r[The_Queue.front().dest_IQ].data << endl;
+
+      r[The_Queue.front().dest_IQ].validity = 1;
+
+      //pop instruction from IQ and mark as valid in ROB
+      The_Queue.pop_front();
+      ROB[PC].valid = 1;
+
+    }
+  }
+}
+
+void Pipeline :: Commit()
+{
+  if (ROB.front().valid == 1)
+  {
+    ROB.pop_front();
+  }
   else
   {
-    cout << "Error: Instruction attempted to commit before valid in Reorder Buffer." << endl;
+    cout << "Error: can't commit." << endl;
   }
 }
-
-int main()
-{
 
 	/*
 	   • initializes necessary pipeline structures, including a Pipeline class instance
@@ -545,34 +703,9 @@ int main()
 	   • Loop again to prompt the user for another program to execute and re-initialize structures to
 	   provide new stats for the next program. Exit if no further programs are to be executed.
 	 */
+int main()
+{
 	Pipeline tester;
 
-
-  /*
-  string response;
-  bool runner = true;
-  while (true)
-  {
-    cout << "What program????";
-    cin >> response;
-    if response == "exit"
-    {
-      runner = false;
-    {
-    else
-    {
-      read_csv(response);
-      tester.Fetch();
-    }
-  }
-
-  }
-  */
-
-	//tester.read_csv("factorial.csv");
-  //tester.Fetch();
-  //tester.uintToBinary(tester.get_csv_contents());
-  //tester.decode(tester.binary_instructions);
-	//cout << "Hello world";
 
 }
