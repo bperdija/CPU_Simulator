@@ -368,9 +368,10 @@ void Pipeline::Fetch()
   std::list<unsigned int>::iterator it;
   it = csv_contents.begin();
 
-  while(((IQueue_finite.size() < 3) && (it != csv_contents.end())) || ((ROB.size() < 3) && (it != csv_contents.end()))) // I would like to iterate as long as it hasnt reached the end of the csv file but the while loop always goes to the end of the csv file, regardless if theres more elements in IQUEUE or ROB. This is wrong!
+  //while(((IQueue_finite.size() < 3) && (it != csv_contents.end())) || ((ROB.size() < 3) && (it != csv_contents.end()))) // I would like to iterate as long as it hasnt reached the end of the csv file but the while loop always goes to the end of the csv file, regardless if theres more elements in IQUEUE or ROB. This is wrong!
+  while((it != csv_contents.end()))
   {
-    cout << "Iqueue size: " << IQueue_finite.size() << endl<< "ROB size: " << ROB.size() << endl;
+    cout << "Iqueue size: " << IQueue_finite.size() << endl << "ROB size: " << ROB.size() << endl;
     uintToBinary(*it); // Fetch the instruction located at PC from the instruction memory
     decode(binary_instruction); // Decode the instruction
     set_ROB_element(binary_instruction); // Assigns a ROB ID to the instruction, places the instruction in the ROB
@@ -427,7 +428,7 @@ int main()
 	 */
 	Pipeline tester;
 
-	tester.read_csv("factorial.csv");
+	tester.read_csv("inst_mem.csv");
   tester.Fetch();
   //tester.uintToBinary(tester.get_csv_contents());
   //tester.decode(tester.binary_instructions);
