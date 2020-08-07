@@ -7,9 +7,6 @@
 #include <vector>
 #include <queue>
 
-#define EXECUTE
-//#define DEBUG
-
 using namespace std;
 #endif
 

@@ -185,7 +185,6 @@ void Pipeline :: Execute()
     cout << endl << "---------------------- INSTRUCTION QUEUE ----------------------" << endl;
     cout <<"Dest    V       Src1    V       Src2    Immediate    ROB ID" << endl;
 
-    //deque<IQ>::const_iterator it;
 
     for (it = The_Queue.cbegin(); it != The_Queue.cend(); ++it)
     {
@@ -206,6 +205,17 @@ void Pipeline :: Execute()
     // Checks the IQ's here for validity
     if (The_Queue.front().src1_valid == 1 && The_Queue.front().src2_valid == 1)
     {
+      try
+      {
+         if (The_Queue.front().dest_IQ == 0) throw Exceptions("constant");
+       }
+
+       catch(Exceptions bad)
+       {
+         cout << "Attempted to write to " << bad.getMsg_parameter() << "!" << endl;
+         exit(0);
+       }
+
       #ifdef DEBUG
       cout << "Instruction: " << The_Queue.front().ROB_ID_IQ << " - Ready for execution" << endl;
       cout << "Operation: " << The_Queue.front().opcode_IQ << endl;
@@ -213,6 +223,33 @@ void Pipeline :: Execute()
 
       if (The_Queue.front().type_IQ == "r")
       {
+        if (The_Queue.front().opcode_IQ == "print")
+        {
+          #ifdef EXECUTE
+          if (r[The_Queue.front().src1_IQ].data == 42)
+          {
+            cout << "\033[1;36mThe Meaning of Life is \033[0m" << r[The_Queue.front().src1_IQ].data << endl;
+          }
+
+          else
+          {
+            cout << "Final Result is: " << r[The_Queue.front().src1_IQ].data << endl;
+          }
+
+          #endif
+        }
+
+        try
+         {
+            if (The_Queue.front().dest_IQ == 2) throw Exceptions("r[2]");
+         }
+
+        catch(Exceptions bad)
+        {
+          cout << "Attempted to write to " << bad.getMsg_parameter() << "!" << endl;
+          exit(0);
+        }
+
         if (The_Queue.front().opcode_IQ == "add")
         {
           r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data + r[The_Queue.front().src2_IQ].data;
@@ -242,26 +279,21 @@ void Pipeline :: Execute()
         {
           r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data;
         }
-
-        else if (The_Queue.front().opcode_IQ == "print")
-        {
-          #ifdef EXECUTE
-          if (r[The_Queue.front().src1_IQ].data == 42)
-          {
-            cout << "\033[1;36mThe Meaning of Life is \033[0m" << r[The_Queue.front().src1_IQ].data << endl;
-          }
-
-          else
-          {
-            cout << "Final Result is: " << r[The_Queue.front().src1_IQ].data << endl;
-          }
-
-          #endif
-        }
       }
 
       else if (The_Queue.front().type_IQ == "i")
       {
+        try
+         {
+            if (The_Queue.front().dest_IQ == 2) throw Exceptions("r[2]");
+         }
+
+        catch(Exceptions bad)
+        {
+          cout << "Attempted to write to " << bad.getMsg_parameter() << "!" << endl;
+          exit(0);
+        }
+
         if (The_Queue.front().opcode_IQ == "add")
         {
           r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data + The_Queue.front().immediate_IQ;

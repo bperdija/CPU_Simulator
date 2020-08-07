@@ -41,12 +41,6 @@ void Memory::read_csv(string file_name)
 			unsigned int temp = stoul((temp_element).c_str(), 0); // string to unsigned int with help from https://www.cplusplus.com/forum/beginner/148948/
 			values.push_back(temp);
 
-    /*  if (myFile.eof())
-      {
-        cout << "ghetto code block" << endl;
-        myFile.close();
-      }
-      */
 		}
     myFile.close();
 	}
