@@ -1,8 +1,4 @@
 #include "Pipeline.h"
-#include "FetchUnit.h"
-#include "ReoderBuffer.h"
-#include "Statistics.h"
-#include "Exceptions.h"
 
 // The Pipeline() function is used to construct a pipeline object.
 // Precondition: Object of Pipeline created.
@@ -322,7 +318,9 @@ void Pipeline :: Execute()
 
     else if (The_Queue.front().src1_valid != 1 || The_Queue.front().src2_valid != 1)
     {
+      #ifdef DEBUG
       cout << "Error: Instruction sources not valid yet" << endl;
+      #endif
     }
 
     total_calls++;
@@ -355,7 +353,9 @@ void Pipeline :: Commit()
 
     else
     {
+      #ifdef DEBUG
       cout << "Error: can't commit." << endl;
+      #endif
     }
   }
   #ifdef DEBUG

@@ -1,3 +1,8 @@
+#include "FetchUnit.h"
+#include "ReoderBuffer.h"
+#include "Statistics.h"
+#include "Exceptions.h"
+
 #define FETCH_WIDTH 3
 #define ISSUE_WIDTH 3
 #define COMMIT_WIDTH 3
