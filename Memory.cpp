@@ -45,5 +45,16 @@ void Memory::read_csv(string file_name)
     myFile.close();
 	}
 
+  try
+ {
+   if (values.empty()) throw Exceptions("empty");
+ }
+
+ catch(Exceptions bad)
+ {
+   cout << "The .CSV file is " << bad.getMsg_parameter() << "!" << endl;
+   exit(0);
+ }
+
 	csv_contents = values;
 }
