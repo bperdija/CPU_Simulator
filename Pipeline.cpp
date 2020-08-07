@@ -185,7 +185,6 @@ void Pipeline :: Execute()
     cout << endl << "---------------------- INSTRUCTION QUEUE ----------------------" << endl;
     cout <<"Dest    V       Src1    V       Src2    Immediate    ROB ID" << endl;
 
-    //deque<IQ>::const_iterator it;
 
     for (it = The_Queue.cbegin(); it != The_Queue.cend(); ++it)
     {

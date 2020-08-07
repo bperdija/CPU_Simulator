@@ -72,8 +72,6 @@ void Instruction::decode(string binary_code)
       string dest_bits = binary_code.substr(6,5);
 			decode_opcode(opcode_bits);
       dest = stringToInt(dest_bits);
-      //cout << "Enter parameter for program: ";
-      //cin >> immediate;
 
       while(true)
       {

@@ -7,9 +7,6 @@
 #include <vector>
 #include <queue>
 
-#define EXECUTE
-//#define DEBUG
-
 using namespace std;
 #endif
 
@@ -31,8 +28,6 @@ class ReorderBuffer
 public:
   ReorderBuffer();
   ~ReorderBuffer();
-  // void Access_ROB_element(int validity);
-  //void set_ROB_element(string inst, int PC_num);
 
 protected:
   deque<ROB_element> ROB;

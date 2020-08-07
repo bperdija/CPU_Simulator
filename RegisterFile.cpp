@@ -5,9 +5,7 @@
 // Postcondition: The r vector size is set to REGISTER_SIZE and each element in r has data set to 0 and validity set to 1 (valid).
 RegisterFile::RegisterFile()
 {
-  // WHAT ABOUT R2?
   r.resize(REGISTER_SIZE);
-  //fill(r.validity.begin(), r.validity.end(), -1);
 
   for (int i = 0; i <= REGISTER_SIZE; i++)
   {

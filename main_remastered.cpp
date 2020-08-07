@@ -1,16 +1,11 @@
 // TO DO:
-// test makefile*
-// create graphs of widths
 // Create audio recording
 // Create individual reports
 
 // IF WE HAVE TIME:
-// more throw exceptions  -> add exception for if r[2] written to by not a p-type and r[0] constant
+// more throw exceptions -> add exception for if r[2] written to by not a p-type and r[0] constant
 // change PC from being pipeline variable to being Instruction variable
-// make all 'Error:' red
-// fix crashing because of too much data
-
-// move if r, i and p code blocks into functions
+// move if r, i, and p code blocks into functions
 
 // IF WE HAVE FUN TIME:
 // Troll mode - Laura
