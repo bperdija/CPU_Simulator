@@ -1,7 +1,6 @@
 #include "FetchUnit.h"
 #include "ReorderBuffer.h"
 #include "Statistics.h"
-#include "Exceptions.h"
 
 #define FETCH_WIDTH 3
 #define ISSUE_WIDTH 3
@@ -11,7 +10,7 @@
 // A class that implements the commit, execute and fetch functions, such that main()
 // simply instantiates the pipeline class and any necessary structures, and then continuously
 // calls pipeline fetch, execute and commit stages until the program has finished executing.
-class Pipeline :  public ReorderBuffer, public Statistics, public Exceptions, public FetchUnit
+class Pipeline :  public ReorderBuffer, public Statistics, public FetchUnit
 {
 public:
   Pipeline();
