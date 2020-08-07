@@ -1,8 +1,4 @@
 #include "Pipeline.h"
-#include "FetchUnit.h"
-#include "ReoderBuffer.h"
-#include "Statistics.h"
-#include "Exceptions.h"
 
 // The Pipeline() function is used to construct a pipeline object.
 // Precondition: Object of Pipeline created.

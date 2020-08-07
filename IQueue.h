@@ -1,3 +1,5 @@
+#include "Instruction.h"
+
 struct IQ
 {
 

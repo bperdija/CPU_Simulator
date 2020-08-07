@@ -1,5 +1,4 @@
 // TO DO:
-// move everything to separate files
 // test makefile*
 // create graphs of widths
 // Create audio recording

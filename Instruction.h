@@ -1,3 +1,4 @@
+#include "Memory.h"
 #include <bitset> //needed for bitset<size>(unsigned int).to_string()
 
 // A class that contains all information required of an instruction -- decodes the instruction;
