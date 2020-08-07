@@ -5,8 +5,8 @@
 // Postcondition: PC and inst_count set to zero, select_file() and run() called.
 Pipeline::Pipeline()
 {
-  PC = 0;
-  inst_count = 0;
+  PC = 0; // used for assigning each instruction their PC 
+  inst_count = 0; // used for the instruction ID in ROB
   select_file();
   run(PC);
 }
