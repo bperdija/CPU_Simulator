@@ -9,6 +9,8 @@
 
 #define EXECUTE
 //#define DEBUG
+
+using namespace std;
 #endif
 
 // The Exceptions() function is used to construct a default Exceptions object.

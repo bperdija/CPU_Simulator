@@ -9,6 +9,8 @@
 
 #define EXECUTE
 //#define DEBUG
+
+using namespace std;
 #endif
 #define REGISTER_SIZE 15
 

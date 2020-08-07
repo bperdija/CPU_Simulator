@@ -9,9 +9,9 @@
 
 #define EXECUTE
 //#define DEBUG
-#endif
 
 using namespace std;
+#endif
 
 // A class that initializes memory (specify size in an overload constructor); initialize contents -
 // read in csv file and create instruction memory. Note if you read in your csv contents as a string,

@@ -9,6 +9,8 @@
 
 #define EXECUTE
 //#define DEBUG
+
+using namespace std;
 #endif
 
 //struct to hold the data of each element in the ROB queue

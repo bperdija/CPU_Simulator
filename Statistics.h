@@ -9,6 +9,8 @@
 
 #define EXECUTE
 //#define DEBUG
+
+using namespace std;
 #endif
 #include <iomanip> //needed for setprecision()
 
