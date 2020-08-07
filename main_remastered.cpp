@@ -28,9 +28,9 @@
 #include <queue>
 #include <bitset> //needed for bitset<size>(unsigned int).to_string()
 
-#define FETCH_WIDTH 2
-#define ISSUE_WIDTH 2
-#define COMMIT_WIDTH 5
+#define FETCH_WIDTH 3
+#define ISSUE_WIDTH 3
+#define COMMIT_WIDTH 3
 #define FINITE_LIMIT 100
 #define REGISTER_SIZE 15
 #define EXECUTE
