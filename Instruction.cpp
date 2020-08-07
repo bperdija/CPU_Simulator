@@ -1,4 +1,5 @@
 #include "Instruction.h"
+#include "Memory.h"
 
 // The Instruction() function is used to construct a Instruction object.
 // Precondition: Object of Instruction created.

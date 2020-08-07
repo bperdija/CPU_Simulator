@@ -1,4 +1,5 @@
 #include "IQueue.h"
+#include "Instruction.h"
 
 // The IQueue() function is used to construct a IQueue object.
 // Precondition: Object of IQueue created.

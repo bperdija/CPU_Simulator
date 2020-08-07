@@ -1,4 +1,5 @@
 #include "FethcUnit.h"
+#include "IQueue.h"
 
 // The FetchUnit() function is used to construct a FethcUnit object.
 // Precondition: Object of FetchUnit created.
