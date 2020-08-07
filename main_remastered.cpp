@@ -379,9 +379,7 @@ protected:
 // Precondition: Object of RegisterFile created.
 // Postcondition: The r vector size is set to REGISTER_SIZE and each element in r has data set to 0 and validity set to 1 (valid).
 RegisterFile::RegisterFile()
-{ //precondition: Object created
-  //postcondition: r vector size set to REGISTER_SIZE, each element in vector given 0 for data value and 1 for validity value (valid)
-
+{
   // WHAT ABOUT R2?
   r.resize(REGISTER_SIZE);
   //fill(r.validity.begin(), r.validity.end(), -1);
