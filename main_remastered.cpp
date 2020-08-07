@@ -28,9 +28,9 @@
 #include <queue>
 #include <bitset> //needed for bitset<size>(unsigned int).to_string()
 
-#define FETCH_WIDTH 3
-#define ISSUE_WIDTH 3
-#define COMMIT_WIDTH 3
+#define FETCH_WIDTH 2
+#define ISSUE_WIDTH 4
+#define COMMIT_WIDTH 4
 #define FINITE_LIMIT 100
 #define REGISTER_SIZE 15
 #define EXECUTE
@@ -1019,10 +1019,12 @@ void Pipeline :: Commit()
       total_commits++;
     }
 
+    #ifdef DEBUG
     else
     {
       cout << "Error: can't commit." << endl;
     }
+    #endif
   }
   #ifdef DEBUG
   cout << "_______________________________________________________________" << endl;
