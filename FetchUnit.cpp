@@ -1,4 +1,4 @@
-#include "FethcUnit.h"
+#include "FetchUnit.h"
 
 // The FetchUnit() function is used to construct a FethcUnit object.
 // Precondition: Object of FetchUnit created.
