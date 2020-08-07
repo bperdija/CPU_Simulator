@@ -1,10 +1,21 @@
 // TO DO:
+// test makefile*
+// create graphs of widths
 // Create audio recording
 // Create individual reports
 // sign up for a demo time
 
 // IF WE HAVE TIME:
+<<<<<<< HEAD
 // move if r, i, and p code blocks into functions
+=======
+// more throw exceptions  -> add exception for if r[2] written to by not a p-type and r[0] constant
+// change PC from being pipeline variable to being Instruction variable
+// make all 'Error:' red
+// fix crashing because of too much data
+
+// move if r, i and p code blocks into functions
+>>>>>>> f4a1b4e36edf745f8bc838d4ff3c751bf5e2de97
 
 // IF WE HAVE FUN TIME:
 // Troll mode - Laura
@@ -21,9 +32,9 @@
 #include <queue>
 #include <bitset> //needed for bitset<size>(unsigned int).to_string()
 
-#define FETCH_WIDTH 3
-#define ISSUE_WIDTH 3
-#define COMMIT_WIDTH 3
+#define FETCH_WIDTH 2
+#define ISSUE_WIDTH 2
+#define COMMIT_WIDTH 2
 #define FINITE_LIMIT 100
 #define REGISTER_SIZE 15
 #define EXECUTE
@@ -146,6 +157,18 @@ void Memory::read_csv(string file_name)
 		}
     myFile.close();
 	}
+
+  try
+  {
+    if (values.empty()) throw Exceptions("empty");
+  }
+
+  catch(Exceptions bad)
+  {
+    cout << "The .CSV file is " << bad.getMsg_parameter() << "!" << endl;
+    exit(0);
+  }
+
 
 	csv_contents = values;
 }
@@ -876,6 +899,34 @@ void Pipeline :: Execute()
 
       if (The_Queue.front().type_IQ == "r")
       {
+         if (The_Queue.front().opcode_IQ == "print")
+        {
+          #ifdef EXECUTE
+          if (r[The_Queue.front().src1_IQ].data == 42)
+          {
+            cout << "\033[1;36mThe Meaning of Life is \033[0m" << r[The_Queue.front().src1_IQ].data << endl;
+          }
+
+          else
+          {
+            cout << "Final Result is: " << r[The_Queue.front().src1_IQ].data << endl;
+          }
+
+          #endif
+        }
+
+        try
+        {
+           if (The_Queue.front().dest_IQ == 0) throw Exceptions("constant");
+           if (The_Queue.front().dest_IQ == 2) throw Exceptions("r[2]");
+        }
+
+       catch(Exceptions bad)
+       {
+         cout << "Attempted to write to " << bad.getMsg_parameter() << "!" << endl;
+         exit(0);
+       }
+
         if (The_Queue.front().opcode_IQ == "add")
         {
           r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data + r[The_Queue.front().src2_IQ].data;
@@ -905,26 +956,23 @@ void Pipeline :: Execute()
         {
           r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data;
         }
-
-        else if (The_Queue.front().opcode_IQ == "print")
-        {
-          #ifdef EXECUTE
-          if (r[The_Queue.front().src1_IQ].data == 42)
-          {
-            cout << "\033[1;36mThe Meaning of Life is \033[0m" << r[The_Queue.front().src1_IQ].data << endl;
-          }
-
-          else
-          {
-            cout << "Final Result is: " << r[The_Queue.front().src1_IQ].data << endl;
-          }
-
-          #endif
-        }
       }
 
       else if (The_Queue.front().type_IQ == "i")
       {
+
+        try
+        {
+           if (The_Queue.front().dest_IQ == 0) throw Exceptions("constant");
+           if (The_Queue.front().dest_IQ == 2) throw Exceptions("r[2]");
+        }
+
+       catch(Exceptions bad)
+       {
+         cout << "Attempted to write to " << bad.getMsg_parameter() << "!" << endl;
+         exit(0);
+       }
+
         if (The_Queue.front().opcode_IQ == "add")
         {
           r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data + The_Queue.front().immediate_IQ;
@@ -1012,10 +1060,12 @@ void Pipeline :: Commit()
       total_commits++;
     }
 
+    #ifdef DEBUG
     else
     {
       cout << "Error: can't commit." << endl;
     }
+    #endif
   }
   #ifdef DEBUG
   cout << "_______________________________________________________________" << endl;
