@@ -28,8 +28,8 @@
 #include <bitset> //needed for bitset<size>(unsigned int).to_string()
 
 #define FETCH_WIDTH 2
-#define ISSUE_WIDTH 4
-#define COMMIT_WIDTH 4
+#define ISSUE_WIDTH 2
+#define COMMIT_WIDTH 2
 #define FINITE_LIMIT 100
 #define REGISTER_SIZE 15
 #define EXECUTE
@@ -152,6 +152,18 @@ void Memory::read_csv(string file_name)
 		}
     myFile.close();
 	}
+
+  try
+  {
+    if (values.empty()) throw Exceptions("empty");
+  }
+
+  catch(Exceptions bad)
+  {
+    cout << "The .CSV file is " << bad.getMsg_parameter() << "!" << endl;
+    exit(0);
+  }
+
 
 	csv_contents = values;
 }
@@ -882,6 +894,34 @@ void Pipeline :: Execute()
 
       if (The_Queue.front().type_IQ == "r")
       {
+         if (The_Queue.front().opcode_IQ == "print")
+        {
+          #ifdef EXECUTE
+          if (r[The_Queue.front().src1_IQ].data == 42)
+          {
+            cout << "\033[1;36mThe Meaning of Life is \033[0m" << r[The_Queue.front().src1_IQ].data << endl;
+          }
+
+          else
+          {
+            cout << "Final Result is: " << r[The_Queue.front().src1_IQ].data << endl;
+          }
+
+          #endif
+        }
+
+        try
+        {
+           if (The_Queue.front().dest_IQ == 0) throw Exceptions("constant");
+           if (The_Queue.front().dest_IQ == 2) throw Exceptions("r[2]");
+        }
+
+       catch(Exceptions bad)
+       {
+         cout << "Attempted to write to " << bad.getMsg_parameter() << "!" << endl;
+         exit(0);
+       }
+
         if (The_Queue.front().opcode_IQ == "add")
         {
           r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data + r[The_Queue.front().src2_IQ].data;
@@ -911,26 +951,23 @@ void Pipeline :: Execute()
         {
           r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data;
         }
-
-        else if (The_Queue.front().opcode_IQ == "print")
-        {
-          #ifdef EXECUTE
-          if (r[The_Queue.front().src1_IQ].data == 42)
-          {
-            cout << "\033[1;36mThe Meaning of Life is \033[0m" << r[The_Queue.front().src1_IQ].data << endl;
-          }
-
-          else
-          {
-            cout << "Final Result is: " << r[The_Queue.front().src1_IQ].data << endl;
-          }
-
-          #endif
-        }
       }
 
       else if (The_Queue.front().type_IQ == "i")
       {
+
+        try
+        {
+           if (The_Queue.front().dest_IQ == 0) throw Exceptions("constant");
+           if (The_Queue.front().dest_IQ == 2) throw Exceptions("r[2]");
+        }
+
+       catch(Exceptions bad)
+       {
+         cout << "Attempted to write to " << bad.getMsg_parameter() << "!" << endl;
+         exit(0);
+       }
+
         if (The_Queue.front().opcode_IQ == "add")
         {
           r[The_Queue.front().dest_IQ].data = r[The_Queue.front().src1_IQ].data + The_Queue.front().immediate_IQ;
