@@ -52,7 +52,7 @@ void Pipeline :: select_file()
       #endif
     }
 
-    else if (user_choice == "Test" || user_choice == "inst_mem.csv")
+    else if (user_choice == "Test" || user_choice == "Inst_mem.csv")
     {
       read_csv("inst_mem.csv");
 
@@ -61,7 +61,7 @@ void Pipeline :: select_file()
       #endif
     }
 
-    else if (user_choice == "Life" || user_choice == "meaning_of_life.csv")
+    else if (user_choice == "Life" || user_choice == "Meaning_of_life.csv")
     {
       read_csv("meaning_of_life.csv");
 
