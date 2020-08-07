@@ -1,23 +1,16 @@
 // TO DO:
-// pre and posts
 // move everything to separate files
-// make makefile*
-// create a simple program of our own. Submit the csv with brief report
+// test makefile*
 // create graphs of widths
-// fix loop to get next csv files***
 // Create audio recording
-// Create individual report
-// Make things protected private
+// Create individual reports
 
 // IF WE HAVE TIME:
-// add exception for if r[2] written to by not a p-type and r[0] constant
-// write get_latency() and get_throughput() functions
-//change PC from being pipeline variable to being Instruction variable
+// more throw exceptions  -> add exception for if r[2] written to by not a p-type and r[0] constant
+// change PC from being pipeline variable to being Instruction variable
 // make all 'Error:' red
 // fix crashing because of too much data
-// move fetch() things to separate functions
-// "enter parameter for program" create 'exit' case
-// more throw exceptions
+
 // move if r, i and p code blocks into functions
 
 // IF WE HAVE FUN TIME:
@@ -69,15 +62,17 @@ private:
   string message;
 };
 
+// The Exceptions() function is used to construct a default Exceptions object.
+// Precondition: Object of Exceptions created.
+// Postcondition: Default object created.
 Exceptions::Exceptions()
-{ //precondition:
-  //postcondition:
-}
+{}
 
+// The Exceptions(string) function is used to construct a Exceptions object.
+// Precondition: Object of Exceptions created.
+// Postcondition: Default object created.
 Exceptions::Exceptions(string entered): message(entered)
-{ //precondition:
-  //postcondition:
-}
+{}
 
 // The ~Execeptions() function is used to destruct a Exceptions object.
 // Precondition: Object of Esceptions was created.
@@ -85,10 +80,11 @@ Exceptions::Exceptions(string entered): message(entered)
 Exceptions::~Exceptions()
 {}
 
+// The getMsg_parameter() function is used to return the error message.
+// Precondition: The Exceptions class has been initialized.
+// Postcondition: The message variable is returned.
 string Exceptions::getMsg_parameter()
-{ //precondition:
-  //postcondition:
-
+{
   return message;
 }
 
@@ -107,10 +103,11 @@ protected:
   vector<unsigned int> csv_contents;
 };
 
+// The Memory() function is used to construct a Memory object.
+// Precondition: Object of Memory created.
+// Postcondition: Default object created.
 Memory::Memory()
-{ //precondition: Memory object created with no parameters
-  //postcondition:
-}
+{}
 
 // The ~Memory() function is used to destruct a Memory object.
 // Precondition: Object of Memory was created.
@@ -118,23 +115,22 @@ Memory::Memory()
 Memory::~Memory()
 {}
 
-// The get_csv_contents() function is used to get the csv_contents from the Memory class. Precondition: read_csv() must have been called to create a vector of the CSV file. Postcondition: returns the csv_contents from Memory class. This return is used as a parameter in uintToBinary();
+// The get_csv_contents() function is used to get the csv_contents from the Memory class.
+// Precondition: read_csv() must have been called to create a vector of the CSV file.
+// Postcondition: Returns the csv_contents from Memory class. This return is used as a parameter in uintToBinary();
 vector<unsigned int> Memory::get_csv_contents()
-{ //precondition: Object of Memory was created
-  //postcondition: csv_contents vector returned
-
+{
   return csv_contents;
 }
 
-// The read_csv() function is used to read an inputted csv file and write to the csv_contents vector in Memory. Precondition: a file_name variable is passed in the parameter (which includes the .csv extension) Postcondition: records each element in the chosen csv file into the vector values, and then copies that vector into the csv_contents vector in the Memory class
+// The read_csv() function is used to read an inputted csv file and write to the csv_contents vector in Memory.
+// Precondition: A file_name variable is passed in the parameter (which includes the .csv extension), the file must be a single line .csv file with unsigned integer elements.
+// Postcondition: Records each element in the chosen csv file into the vector values, and then copies that vector into the csv_contents vector in the Memory class.
 void Memory::read_csv(string file_name)
-{ //precondition: function called for object instance with file name passed, file must be a single line .csv file with unsigned integer elements
-  //postcondition: contents read and each element saved as unsigned integer to its own element in vector csv_contents
-
-	// variables
+{
 	string temp_element;
 	// define empty vectors to store values
-	std::vector<unsigned int> values;
+	vector<unsigned int> values;
 	string file = file_name;
 	ifstream myFile;
 	myFile.open(file);
@@ -188,6 +184,9 @@ protected:
   int address;  //bits 2 to 31: used in j
 };
 
+// The Instruction() function is used to construct a Instruction object.
+// Precondition: Object of Instruction created.
+// Postcondition: Default object created.
 Instruction::Instruction()
 {}
 
@@ -204,11 +203,11 @@ void Instruction::uintToBinary(unsigned int given)
 	binary_instruction = bitset<32>(given).to_string();
 }
 
-// The decode() function is used to determine what type of instruction format (R,I,J, or P type) each element in the vector string from the Instruction class is. After that, this function will write to the "type" and "opcode" string variables in the Instruction class, as well as the "dest", "src1", "src2", "immediate" and "address" integer values in the instruction class.  Precondition: A vector string that only contained binary values was successfully passed into the function. Postcondition: Determined what type of instruction format (R,I,J, or P type) each element in the vector string was. Wrote to the "type" and "opcode" string variables in the Instruction class, as well as the "dest", "src1", "src2", "immediate" and "address" integer values in the instruction class.
+// The decode() function is used to determine what type of instruction format (R,I,J, or P type) each element in the vector string from the Instruction class is. After that, this function will write to the "type" and "opcode" string variables in the Instruction class, as well as the "dest", "src1", "src2", "immediate" and "address" integer values in the instruction class.
+//Precondition: A string is passed as the parameter.
+//Postcondition: Determined what type of instruction format (R,I,J, or P type) each element in the vector string was. Wrote to the "type" and "opcode" string variables in the Instruction class, as well as the "dest", "src1", "src2", "immediate" and "address" integer values in the instruction class. If an invalid instruction type an error is printed.
 void Instruction::decode(string binary_code)
-{ //precondition: binary string passed as parameter
-  //postcondition: binary string decoded, decode_opcode() called to determine opcode, stringToInt() called to converted variables that dhould be integers from strings to integers, type, opcode, destination, src1, src2, immediate, and address saved to respective variables, if invalid instruction type error printed
-
+{
 		string type_bits = binary_code.substr(0,2);
 
     // type r
@@ -291,10 +290,10 @@ void Instruction::decode(string binary_code)
 }
 
 // The decode_opcode() function is used to simply write to opcode in the class Instruction based on what parameter was passed. Precondition: A parameter from the function decode()  Postcondition: Determined what type of instruction format (R,I,J, or P type) each element in the vector string was. Wrote to the "type" and "opcode" string variables in the Instruction class, as well as the "dest", "src1", "src2", "immediate" and "address" integer values in the instruction class.
+// Precondition: A string passed as the parameter.
+// Postcondition: If the string matches an opcode operation save the opcode name to opcode variable, if it doesn't match print an error.
 void Instruction::decode_opcode(string code)
-{ //precondition: binary string passed as parameter
-  //postcondition: if binary string matches and opcode operation save string of opcode name to opcode variable, else print error
-
+{
 	if (code == "0000") // add
 	{
 		opcode = "add";
@@ -346,10 +345,11 @@ void Instruction::decode_opcode(string code)
 	}
 }
 
+// The stringToInt() function is used to convert the binary string code to its decimal value.
+// Precondition: A string is passed as the parameter.
+// Postcondition: The string converted to decimal its representation as integer and the integer is returned.
  int Instruction:: stringToInt(string code)
-{ //precondition: binary string passed as parameter
-  //postcondition: binary string converted to decimal representation as integer, integer returned
-
+{
   int result = stoi(code, 0, 2);
   return result;
 }
@@ -436,10 +436,11 @@ ReorderBuffer :: ReorderBuffer()
 ReorderBuffer::~ReorderBuffer()
 {}
 
+// The set_ROB_element() function is used to push an instruction onto the ROB.
+// Precondition: The binary string representing the instruction and integer for the instruction's PC are passed as parameters.
+// Postcondition: new element of ROB deque pushed to back with valid set to 0 (invalid), inst set to the binary instruction string, and ROB_ID set to the PC
 void ReorderBuffer::set_ROB_element(string inst, int PC_num)
-{ //precondition: binary string representing the instruction and integer for the instruction's PC passed
-  //postcondition: new element of ROB deque pushed to back with valid set to 0 (invalid), inst set to the binary instruction string, and ROB_ID set to the PC
-
+{
   ROB.push_back(ROB_element(0, inst, PC_num)); //create new ROB_element in the ROB queue
 }
 
@@ -473,7 +474,7 @@ protected:
   void set_IQ_element(int PC_num);
 };
 
-// The IQueuet() function is used to construct a IQueue object.
+// The IQueue() function is used to construct a IQueue object.
 // Precondition: Object of IQueue created.
 // Postcondition: Default object created.
 IQueue::IQueue()
@@ -485,11 +486,10 @@ IQueue::IQueue()
 IQueue::~IQueue()
 {}
 
+  // Precondition: The integer representing PC number passed as parameter, RegisterFile vector r has been initialized,  and the instruction has been decoded in decode() in Instruction Class.
+  // Postcondition: If the type of instruction is r, i, or p, push instruction onto IQ using overloaded IQ constructor, if not print an error.
 void IQueue::set_IQ_element(int PC_num)
-{ //precondition: integer representing PC number passed as parameter, RegisterFile vector r initialized, instruction decoded in decode() in Instruction Class
-  //postcondition: if type of instruction is r, i, or p, push instruction onto queue using overloaded IQ constructor, else print error
-
-
+{
   if (type == "r")
   {
     The_Queue.push_back(IQ(opcode, src1, r[src1].validity, src2, r[src2].validity, -1, dest, PC_num, type)); //first constructor
