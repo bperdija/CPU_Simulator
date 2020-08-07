@@ -1,3 +1,5 @@
+#include "Pipeline.h"
+
 // Basic main() function which initializes a Pipeline object.
 // Precondition: None.
 // Postcondition: initializes a Pipeline obect, whos constructor will call the necessary functions to run the program. Latency and throuput are also provided inside the constructor. Loops until user wishes to exit.
