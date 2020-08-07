@@ -31,4 +31,4 @@ int main()
   }
 
   return 0;
-}
+} //youtube.com/watch?v=oHg5SJYRHA0 <--- very useful, I highly recommend watching this
