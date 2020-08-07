@@ -1,11 +1,10 @@
 #include "Memory.h"
-#include "Exceptions.h"
 #include <bitset> //needed for bitset<size>(unsigned int).to_string()
 
 // A class that contains all information required of an instruction -- decodes the instruction;
 // converts instruction from unsigned int to binary; provides various accessor functions for all
 // parameters of a given instruction (i.e. get src1, get src2, get operation, get immediate etc)
-class Instruction : public Memory, public Exceptions
+class Instruction : public Memory
 {
 public:
   Instruction();
