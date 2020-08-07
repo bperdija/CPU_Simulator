@@ -28,5 +28,5 @@ public:
   ~RegisterFile();
 
 protected:
-  vector<Register_File> r;
+  vector<Register_File> r; // vector used to allow for use of [] 
 };

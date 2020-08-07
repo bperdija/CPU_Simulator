@@ -39,6 +39,7 @@ void Statistics::calc_throughput()
 // Postcondition: The latency and throughput are calcualted and, when in DEBUG mode, printed to screen.
 void Statistics::print_Statistics()
 {
+  // calculate latency and throughput to print up-to-date latency and throughput
   calc_latency();
   calc_throughput();
 

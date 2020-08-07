@@ -30,26 +30,34 @@ void Instruction::decode(string binary_code)
 		if (type_bits == "00")
 		{
 			type = "r";
+			// retrieve bits for opcode, dest, src1, and src2
 			string opcode_bits = binary_code.substr(2,4);
       string dest_bits = binary_code.substr(6,5);
       string src1_bits = binary_code.substr(11,5);
       string src2_bits = binary_code.substr(16,5);
-			decode_opcode(opcode_bits);
+			decode_opcode(opcode_bits); // decode opcode bits to find Operation
+
+			// convert dest, src1, and scr2 to integers
       dest = stringToInt(dest_bits);
       src1 = stringToInt(src1_bits);
       src2 = stringToInt(src2_bits);
+
+			// set immediate to -1 as it is not used in the r-type
       immediate = -1;
 		}
 
-    // type i. type i DOES NOT have an src2.
+    // type i
 		else if (type_bits == "01")
     {
 			type = "i";
+			// retrieve bits for opcode, dest, src1, and immediate
 			string opcode_bits = binary_code.substr(2,4);
       string dest_bits = binary_code.substr(6,5);
       string src1_bits = binary_code.substr(11,5);
       string immediate_bits = binary_code.substr(16, 16);
-			decode_opcode(opcode_bits);
+			decode_opcode(opcode_bits); // decode opcode bits to find Operation
+
+			// convert dest, src1, and immediate to integers
       dest = stringToInt(dest_bits);
       src1 = stringToInt(src1_bits);
       immediate = stringToInt(immediate_bits);
@@ -59,20 +67,26 @@ void Instruction::decode(string binary_code)
 		else if (type_bits == "10")
     {
       type = "j";
+			// retrieve bits for address
       string address_bits = binary_code.substr(2,30);
-      address = stringToInt(address_bits);
 
+			// convert address to an integer
+      address = stringToInt(address_bits);
 		}
 
-    // type p. Type p DOES NOT have an src1 or src2
+    // type p
 		else if (type_bits == "11")
     {
 			type = "p";
+			// retrieve bits for opcode and destination
 			string opcode_bits = binary_code.substr(2,4);
       string dest_bits = binary_code.substr(6,5);
-			decode_opcode(opcode_bits);
+			decode_opcode(opcode_bits); // decode opcode bits to find Operation
+
+			// convert dest to an integer
       dest = stringToInt(dest_bits);
 
+			// prompt user for parameter, keep looping until a valid parameter is entered
       while(true)
       {
 
@@ -97,6 +111,7 @@ void Instruction::decode(string binary_code)
         }
 		}
 
+		// print error if invalid instruction type
 		else
     {
 			#ifdef DEBUG
@@ -120,7 +135,7 @@ void Instruction::decode_opcode(string code)
 		opcode = "subtract";
 	}
 
-  else if (code == "0010")
+  else if (code == "0010") // multiply
   {
     opcode = "multiply";
   }
@@ -140,7 +155,7 @@ void Instruction::decode_opcode(string code)
 		opcode = "BEQ";
 	}
 
-	else if (code == "0110") // BNE (sub)
+	else if (code == "0110") // BNE
 	{
 		opcode = "BNE";
 	}
@@ -155,6 +170,7 @@ void Instruction::decode_opcode(string code)
     opcode = "print";
   }
 
+	// print error if invalid opcode
 	else
 	{
 		#ifdef DEBUG

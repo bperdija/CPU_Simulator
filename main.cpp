@@ -12,17 +12,20 @@ int main()
 
       Pipeline tester;
 
+      // ask user if they want to run another file
       string response;
       cout << "Would you like to test another program?" << endl;
       cout << "If yes, type 'y',  otherwise press any other key:" << endl;
       cout << "Response: ";
       cin >> response;
 
-
+      // if yes loop again and create a new pipeline instance
       if (response == "y")
       {
         loop = true;
       }
+
+      // if not yes, end the loop
       else
       {
         loop = false;

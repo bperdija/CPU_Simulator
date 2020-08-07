@@ -17,5 +17,6 @@ ReorderBuffer::~ReorderBuffer()
 // Postcondition: new element of ROB deque pushed to back with valid set to 0 (invalid), inst set to the binary instruction string, and ROB_ID set to the PC
 void ReorderBuffer::set_ROB_element(string inst, int PC_num)
 {
-  ROB.push_back(ROB_element(0, inst, PC_num)); //create new ROB_element in the ROB queue
+  //create new ROB_element in the ROB queue, set to invalid, set binary string, and PC number
+  ROB.push_back(ROB_element(0, inst, PC_num));
 }

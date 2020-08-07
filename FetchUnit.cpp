@@ -25,6 +25,7 @@ void FetchUnit::jtype()
 // Postcondition: If the destination value and src1 value are not equal, next fetch the PC equal to the immediate value. If equal, next fetch the next PC.
 void FetchUnit::BNE()
 {
+  // check if src1 and dest are not equal
   if (r[src1].data != r[dest].data)
   {
     PC = immediate;
@@ -41,6 +42,7 @@ void FetchUnit::BNE()
 // Postcondition: If the destination value and src1 value are equal, next fetch the PC equal to the immediate value. If not equal, next fetch the next PC.
 void FetchUnit::BEQ()
 {
+  // check if src1 and dest are equal
   if (r[src1].data == r[dest].data)
   {
     PC = immediate;

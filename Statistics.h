@@ -31,8 +31,8 @@ protected:
   double total_calls; //sum of instructions that enter a stage in the pipeline (for fetch, execute and commit)
   double total_commits; //sum of all instructions that are committed
 
-  double total_execute_calls;
-  double total_instr_exec;
+  double total_execute_calls; //sum of all the times the Execute() function is called
+  double total_instr_exec; //sum of all instructions executed in program
 
   double latency;
   double throughput;

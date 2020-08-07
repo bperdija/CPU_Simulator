@@ -27,6 +27,6 @@ public:
   ~IQueue();
 
 protected:
-  deque<IQ> The_Queue;
+  deque<IQ> The_Queue; // deque used to manually force FIFO and allow for use of []
   void set_IQ_element(int PC_num);
 };

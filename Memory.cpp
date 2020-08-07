@@ -29,22 +29,23 @@ void Memory::read_csv(string file_name)
 	// define empty vectors to store values
 	vector<unsigned int> values;
 	string file = file_name;
-	ifstream myFile;
-	myFile.open(file);
+	ifstream myFile; // create ifstream isntance to read file
+	myFile.open(file); // open file to enable reading
 
-	if(myFile.is_open()) // while the file is open
+	if(myFile.is_open()) // if the file is open read elements
 	{
-		while(myFile.peek() != EOF)
+		while(myFile.peek() != EOF) // loop while the next element is not the end of the file
 
 		{
-			getline(myFile, temp_element, ',');
-			unsigned int temp = stoul((temp_element).c_str(), 0);
+			getline(myFile, temp_element, ','); // read file until it hits a comma
+			unsigned int temp = stoul((temp_element).c_str(), 0); // convert retrieved element from a string to an unsigned integer
 			values.push_back(temp);
 
 		}
     myFile.close();
 	}
 
+  // if the file is empty throw an exception and terminate program
   try
  {
    if (values.empty()) throw Exceptions("empty");
@@ -56,5 +57,5 @@ void Memory::read_csv(string file_name)
    exit(0);
  }
 
-	csv_contents = values;
+	csv_contents = values; // if all is good copy values into csv_contents vector
 }

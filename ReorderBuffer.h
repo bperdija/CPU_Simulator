@@ -30,6 +30,6 @@ public:
   ~ReorderBuffer();
 
 protected:
-  deque<ROB_element> ROB;
+  deque<ROB_element> ROB; // deque used to manually force FIFO and allow for use of []
   void set_ROB_element(string inst, int PC_num);
 };

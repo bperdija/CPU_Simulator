@@ -2,10 +2,10 @@
 output: main.o Memory.o Instruction.o IQueue.o RegisterFile.o ReorderBuffer.o Statistics.o Pipeline.o Exceptions.o FetchUnit.o
 	g++ main.o Memory.o Instruction.o IQueue.o RegisterFile.o ReorderBuffer.o Statistics.o Pipeline.o Exceptions.o FetchUnit.o -o output
 
-main.o: main.cpp 
+main.o: main.cpp
 	g++ -c main.cpp
 
-Memory.o: Memory.cpp Memory.h 
+Memory.o: Memory.cpp Memory.h
 	g++ -c Memory.cpp
 
 Instruction.o: Instruction.cpp Instruction.h
@@ -25,12 +25,12 @@ Statistics.o: Statistics.cpp Statistics.h
 
 Pipeline.o: Pipeline.cpp Pipeline.h
 	g++ -c Pipeline.cpp
-	
+
 Exceptions.o: Exceptions.cpp Exceptions.h
 	g++ -c Exceptions.cpp
-	
+
 FetchUnit.o: FetchUnit.cpp FetchUnit.h
 	g++ -c FetchUnit.cpp
 
-clean: 
+clean:
 	rm *.o output

@@ -5,7 +5,7 @@
 // Postcondition: PC and inst_count set to zero, select_file() and run() called.
 Pipeline::Pipeline()
 {
-  PC = 0; // used for assigning each instruction their PC 
+  PC = 0; // used for assigning each instruction their PC
   inst_count = 0; // used for the instruction ID in ROB
   select_file();
   run(PC);
@@ -25,6 +25,8 @@ void Pipeline :: select_file()
   string user_choice;
 
   cin.clear();
+
+  // prompt user for file, if invalid entry throw exception and have the user try again
   try
   {
     cout << endl << "Type 'exit' to terminate this application" << endl;
@@ -33,6 +35,7 @@ void Pipeline :: select_file()
     cin >> user_choice;
     user_choice[0] = toupper(user_choice[0]);
 
+    // if fibonacci file entered read fibonacci.csv
     if (user_choice == "Fibonacci" || user_choice == "Fibonacci.csv" )
     {
 
@@ -43,6 +46,7 @@ void Pipeline :: select_file()
       #endif
     }
 
+    // if factorial file entered read factorial.csv
     else if (user_choice == "Factorial" || user_choice == "Factorial.csv")
     {
       read_csv("factorial.csv");
@@ -52,6 +56,7 @@ void Pipeline :: select_file()
       #endif
     }
 
+    // if Test file entered read inst_mem.csv
     else if (user_choice == "Test" || user_choice == "Inst_mem.csv")
     {
       read_csv("inst_mem.csv");
@@ -61,6 +66,7 @@ void Pipeline :: select_file()
       #endif
     }
 
+    // if Life file entered read meaning_of_life.csv
     else if (user_choice == "Life" || user_choice == "Meaning_of_life.csv")
     {
       read_csv("meaning_of_life.csv");
@@ -70,6 +76,7 @@ void Pipeline :: select_file()
       #endif
     }
 
+    // if exit entered terminate program
     else if (user_choice == "Exit")
     {
       cout << "Good bye." << endl;
@@ -94,12 +101,15 @@ void Pipeline :: select_file()
 // Postcondition: If there are still more instructions to fetch or to commit, the pipeline is looped through. When all instructions are completed, the statistics are printed to the screen.
 void Pipeline::run(int PC_number)
 {
+    // loop as long as there are still more instructions to fetch or commit
     while ((PC < csv_contents.size()) || !ROB.empty())
     {
       Fetch(csv_contents[PC_number]);
       Execute();
       Commit();
     }
+
+    // when program done running print statistics
     print_Statistics();
 }
 
@@ -113,10 +123,12 @@ void Pipeline::Fetch(unsigned int inst)
 cout << endl << "---------------------------- FETCH ----------------------------" << endl;
 #endif
 
+  // loop as long as there is still width in FETCH_WIDTH and there are more instructions to fetch
   for (int i = 0; (i < FETCH_WIDTH && PC < csv_contents.size()); i++, total_calls++)
   {
       if ((The_Queue.size() < FINITE_LIMIT) || (ROB.size() < FINITE_LIMIT))
       {
+        // convert instruction to an unsigned integer and then decode
         uintToBinary(csv_contents[PC]);
         decode(binary_instruction);
 
@@ -125,14 +137,14 @@ cout << endl << "---------------------------- FETCH ----------------------------
         cout << "b" << binary_instruction << endl;
         #endif
 
-
+        // if instruction a j-type divert pipeline by calling jtype()
         if (type == "j")
         {
           jtype();
-        //  PC = address;
           continue;
         }
 
+        // if instruction is a BEQ stall the pipeline by calling BEQ()
         else if (opcode == "BEQ")
         {
 
@@ -145,7 +157,7 @@ cout << endl << "---------------------------- FETCH ----------------------------
           continue;
         }
 
-
+        // if instruction is a BNE stall the pipeline by calling BNE()
         else if (opcode == "BNE")
         {
           if (!The_Queue.empty())
@@ -159,6 +171,7 @@ cout << endl << "---------------------------- FETCH ----------------------------
 
         else
         {
+          // push the instruction onto the ROB and IQ
           set_ROB_element(binary_instruction, inst_count);
           set_IQ_element(inst_count);
 
@@ -166,7 +179,6 @@ cout << endl << "---------------------------- FETCH ----------------------------
           PC++;
         }
       }
-
   }
 }
 
@@ -180,6 +192,8 @@ void Pipeline :: Execute()
   #ifdef DEBUG
   deque<IQ>::const_iterator it;
   it = The_Queue.cbegin();
+
+  // if there are still instructions in the IQ print them to the screen and possibly execute
   if (it != The_Queue.cend())
   {
     cout << endl << "---------------------- INSTRUCTION QUEUE ----------------------" << endl;
@@ -195,6 +209,7 @@ void Pipeline :: Execute()
   }
   #endif
 
+  // loop as long as there is still width in ISSUE_WIDTH and instructions in the IQ
   for (int i = 0; i < ISSUE_WIDTH && The_Queue.size() != 0; i++)
   {
     #ifdef DEBUG
@@ -202,9 +217,10 @@ void Pipeline :: Execute()
     cout << " checking status src2 R" << The_Queue.front().src2_IQ << ", V = " << The_Queue.front().src2_valid << endl;
     #endif
 
-    // Checks the IQ's here for validity
+    // check if both src1 and src2 of the instruction are valid in the IQ
     if (The_Queue.front().src1_valid == 1 && The_Queue.front().src2_valid == 1)
     {
+      // throw an exception if the program tries to write to r[0]
       try
       {
          if (The_Queue.front().dest_IQ == 0) throw Exceptions("constant");
@@ -221,8 +237,10 @@ void Pipeline :: Execute()
       cout << "Operation: " << The_Queue.front().opcode_IQ << endl;
       #endif
 
+      // check if the instruction is of type r and execute appropriately according to the opcode
       if (The_Queue.front().type_IQ == "r")
       {
+        // if the instruction is a print, print the value of src1 to the screen
         if (The_Queue.front().opcode_IQ == "print")
         {
           #ifdef EXECUTE
@@ -239,6 +257,7 @@ void Pipeline :: Execute()
           #endif
         }
 
+        // throw an exception if the program tries to write to r[2] when not a p-type
         try
          {
             if (The_Queue.front().dest_IQ == 2) throw Exceptions("r[2]");
@@ -281,8 +300,10 @@ void Pipeline :: Execute()
         }
       }
 
+      // check if the instruction is of type i and execute appropriately according to the opcode
       else if (The_Queue.front().type_IQ == "i")
       {
+        // throw an exception if the program tries to write to r[2] when not a p-type
         try
          {
             if (The_Queue.front().dest_IQ == 2) throw Exceptions("r[2]");
@@ -320,6 +341,7 @@ void Pipeline :: Execute()
         }
       }
 
+      // check if the instruction is of type p and save the immediate value to the value of r[dest]
       else if (The_Queue.front().type_IQ == "p")
       {
         r[The_Queue.front().dest_IQ].data = The_Queue.front().immediate_IQ;
@@ -329,10 +351,10 @@ void Pipeline :: Execute()
       cout << "Executed" << endl;
       #endif
 
-
+      // mark the dest as valid in the register
       r[The_Queue.front().dest_IQ].validity = 1;
 
-      //pop instruction from IQ and mark as valid in ROB
+      // Mark instruction as valid in ROB according to its PC
       for (auto it = ROB.begin(); it!=ROB.end(); it++)
       {
         if (it->ROB_ID == The_Queue.front().ROB_ID_IQ)
@@ -345,9 +367,11 @@ void Pipeline :: Execute()
       cout << "ROB " << The_Queue.front().ROB_ID_IQ << " marked." << endl << endl;
       #endif
 
+      // pop the instruction off the IQ
       The_Queue.pop_front();
     }
 
+    // if src1 or src2 is not valid print an error
     else if (The_Queue.front().src1_valid != 1 || The_Queue.front().src2_valid != 1)
     {
       #ifdef DEBUG
@@ -370,9 +394,12 @@ void Pipeline :: Commit()
   cout << "--------------------------- COMMIT ----------------------------" << endl;
   #endif
 
+  // loop as long as there is still width in COMMIT_WIDTH and instructions in the ROB
   for (int i = 0; i < COMMIT_WIDTH && ROB.size() != 0; i++)
   {
     total_calls++;
+
+    // check if the front of the ROB is valid, if yes pop it off
     if (ROB.front().valid == 1)
     {
       #ifdef DEBUG
@@ -382,7 +409,7 @@ void Pipeline :: Commit()
       ROB.pop_front();
       total_commits++;
     }
-
+    // if the instruction is invalid print an error
     else
     {
       #ifdef DEBUG

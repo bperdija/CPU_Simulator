@@ -12,5 +12,5 @@ public:
 protected:
   void read_csv(string file_name);
   vector<unsigned int> get_csv_contents();
-  vector<unsigned int> csv_contents;
+  vector<unsigned int> csv_contents; // vector used as allows for use of [] and FIFO not necessary
 };
