@@ -1,3 +1,17 @@
+#ifndef GENERAL_LIBS_DEFS
+#define GENERAL_LIBS_DEFS
+
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <queue>
+
+#define EXECUTE
+//#define DEBUG
+#endif
+#include <iomanip> //needed for setprecision()
+
 //a class used to track and calculate latency and throughput statistics of the running program. Statistics are provided to the user via standard output at the end of a program’s execution.
 class Statistics
 {

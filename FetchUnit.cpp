@@ -1,3 +1,5 @@
+#include "FethcUnit.h"
+
 // The FetchUnit() function is used to construct a FethcUnit object.
 // Precondition: Object of FetchUnit created.
 // Postcondition: Default object created.

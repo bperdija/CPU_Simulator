@@ -1,3 +1,16 @@
+#ifndef GENERAL_LIBS_DEFS
+#define GENERAL_LIBS_DEFS
+
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <queue>
+
+#define EXECUTE
+//#define DEBUG
+#endif
+
 // The Exceptions() function is used to construct a default Exceptions object.
 // Precondition: Object of Exceptions created.
 // Postcondition: Default object created.

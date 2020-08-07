@@ -1,3 +1,5 @@
+#include "Exceptions.h"
+
 class Exceptions
 {
 public:

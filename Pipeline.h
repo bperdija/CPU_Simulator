@@ -1,3 +1,8 @@
+#define FETCH_WIDTH 3
+#define ISSUE_WIDTH 3
+#define COMMIT_WIDTH 3
+#define FINITE_LIMIT 100
+
 // A class that implements the commit, execute and fetch functions, such that main()
 // simply instantiates the pipeline class and any necessary structures, and then continuously
 // calls pipeline fetch, execute and commit stages until the program has finished executing.

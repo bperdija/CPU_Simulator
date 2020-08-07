@@ -1,3 +1,17 @@
+#ifndef GENERAL_LIBS_DEFS
+#define GENERAL_LIBS_DEFS
+
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <queue>
+
+#define EXECUTE
+//#define DEBUG
+#endif
+#define REGISTER_SIZE 15
+
 struct Register_File
 {
   Register_File() : data(), validity() {} //default constructor

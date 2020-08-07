@@ -1,3 +1,5 @@
+#include "IQueue.h"
+
 // The IQueue() function is used to construct a IQueue object.
 // Precondition: Object of IQueue created.
 // Postcondition: Default object created.

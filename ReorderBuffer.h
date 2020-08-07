@@ -1,3 +1,16 @@
+#ifndef GENERAL_LIBS_DEFS
+#define GENERAL_LIBS_DEFS
+
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <queue>
+
+#define EXECUTE
+//#define DEBUG
+#endif
+
 //struct to hold the data of each element in the ROB queue
 struct ROB_element
 {

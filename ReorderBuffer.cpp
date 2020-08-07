@@ -1,3 +1,5 @@
+#include "ReorderBuffer.h"
+
 // The ReorderBuffer() function is used to construct a ReorderBufferobject.
 // Precondition: Object of ReorderBuffer created.
 // Postcondition: Default object created.

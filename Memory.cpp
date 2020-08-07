@@ -1,3 +1,5 @@
+#include "Memory.h"
+
 // The Memory() function is used to construct a Memory object.
 // Precondition: Object of Memory created.
 // Postcondition: Default object created.

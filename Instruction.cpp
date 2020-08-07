@@ -1,3 +1,5 @@
+#include "Instruction.h"
+
 // The Instruction() function is used to construct a Instruction object.
 // Precondition: Object of Instruction created.
 // Postcondition: Default object created.

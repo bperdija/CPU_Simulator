@@ -1,3 +1,5 @@
+#include "RegisterFile.h"
+
 // The RegisterFile() function is used to construct a RegisterFile object.
 // Precondition: Object of RegisterFile created.
 // Postcondition: The r vector size is set to REGISTER_SIZE and each element in r has data set to 0 and validity set to 1 (valid).

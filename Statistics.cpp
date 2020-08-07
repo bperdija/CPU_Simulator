@@ -1,3 +1,5 @@
+#include "Statistics.h"
+
 // The Statistics() function is used to construct a Statistics object.
 // Precondition: Object of Statistics created.
 // Postcondition: Set total_calls, total_commits, total_execute_calls, total_instr_exec, and latency set to zero.
