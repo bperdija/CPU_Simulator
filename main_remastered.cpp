@@ -1,10 +1,9 @@
 // TO DO:
 // Create audio recording
 // Create individual reports
+// sign up for a demo time
 
 // IF WE HAVE TIME:
-// more throw exceptions -> add exception for if r[2] written to by not a p-type and r[0] constant
-// change PC from being pipeline variable to being Instruction variable
 // move if r, i, and p code blocks into functions
 
 // IF WE HAVE FUN TIME:
