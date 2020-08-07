@@ -34,11 +34,11 @@ void Memory::read_csv(string file_name)
 
 	if(myFile.is_open()) // while the file is open
 	{
-		while(myFile.peek() != EOF)//(!myFile.eof())
-    //while(myFile.good())
+		while(myFile.peek() != EOF)
+
 		{
 			getline(myFile, temp_element, ',');
-			unsigned int temp = stoul((temp_element).c_str(), 0); // string to unsigned int with help from https://www.cplusplus.com/forum/beginner/148948/
+			unsigned int temp = stoul((temp_element).c_str(), 0);
 			values.push_back(temp);
 
 		}
