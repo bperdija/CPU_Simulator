@@ -1,4 +1,5 @@
 #include "Instruction.h"
+#include "RegisterFile.h"
 
 struct IQ
 {
