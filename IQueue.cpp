@@ -33,6 +33,8 @@ void IQueue::set_IQ_element(int PC_num)
 
   else
   {
+    #ifdef DEBUG
     cout << "Error: Instruction could not be added to the IQueue." << endl;
+    #endif
   }
 }

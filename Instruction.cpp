@@ -101,7 +101,9 @@ void Instruction::decode(string binary_code)
 
 		else
     {
+			#ifdef DEBUG
 			cout << "Error: invalid instruction type." << endl << endl;
+			#endif
 		}
 }
 
@@ -157,7 +159,9 @@ void Instruction::decode_opcode(string code)
 
 	else
 	{
+		#ifdef DEBUG
 		cout << "Error: Invalid opcode value." << endl << endl;
+		#endif
 	}
 }
 
